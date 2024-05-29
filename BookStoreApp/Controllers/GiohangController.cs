@@ -113,5 +113,57 @@ namespace BookStoreApp.Controllers
             lstGiohang.Clear();
             return RedirectToAction("Index", "BookStore");
         }
+
+        // Hiển thị View Dathang để cập nhật các thông tin cho đơn hàng
+        [HttpGet]
+        public ActionResult DatHang()
+        {
+            if (Session["Taikhoan"] == null || Session["Taikhoan"].ToString() == "")
+            {
+                return RedirectToAction("Dangnhap", "Nguoidung");
+            }
+            if (Session["Giohang"] == null)
+            {
+                return RedirectToAction("Index", "BookStore");
+            }
+            //Lấy giỏ hàng từ Session
+            List<GioHang> lstGiohang = Laygiohang();
+            ViewBag.Tongsoluong = Tongsoluong();
+            ViewBag.Tongtien = Tongtien();
+            return View(lstGiohang);
+        }
+        [HttpPost]
+        public ActionResult DatHang(FormCollection collection)
+        {
+            DONDATHANG ddh = new DONDATHANG();
+            KHACHHANG kh = (KHACHHANG)Session["Taikhoan"];
+            List<GioHang> gh = Laygiohang();
+            ddh.MaKH = kh.MaKH;
+            ddh.Ngaydat = DateTime.Now;
+            var Ngaygiao = String.Format("{0:MM/dd/yyyy}", collection["Ngaygiao"]);
+            ddh.Ngaygiao = DateTime.Parse(Ngaygiao);
+            ddh.Tinhtranggiaohang = false;
+            ddh.Dathanhtoan = false;
+            db.DONDATHANGs.Add(ddh);
+            db.SaveChanges();
+
+            foreach(var item in gh)
+            {
+                CHITIETDONTHANG ctdh = new CHITIETDONTHANG();
+                ctdh.MaDonHang = ddh.MaDonHang;
+                ctdh.Masach = item.iMasach;
+                ctdh.Soluong = item.iSoluong;
+                ctdh.Dongia = (decimal)item.dDongia;
+                db.CHITIETDONTHANGs.Add(ctdh);
+            }
+            db.SaveChanges();
+            Session["Giohang"] = null;
+            return RedirectToAction("Xacnhandonhang", "Giohang");
+        }
+        public ActionResult Xacnhandonhang()
+        {
+            return View();
+        }
+
     }
 }

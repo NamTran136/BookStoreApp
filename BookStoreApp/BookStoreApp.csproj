@@ -222,6 +222,8 @@
     <Content Include="Views\BookStore\Index.cshtml" />
     <Content Include="Views\BookStore\Details.cshtml" />
     <Content Include="Views\GioHang\Giohang.cshtml" />
+    <Content Include="Views\GioHang\DatHang.cshtml" />
+    <Content Include="Views\GioHang\Xacnhandonhang.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
